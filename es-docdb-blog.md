@@ -62,31 +62,31 @@ AWS Cloud9 is a cloud-based integrated development environment (IDE). From the A
 From the terminal in your Cloud9 environment, remove any existing credentials file:
 
 ```
-`rm -vf ${HOME}/.aws/credentials`
+rm -vf ${HOME}/.aws/credentials
 ```
 
 
 Create an environment variable for the AWS CloudFormation stack name you created using the commands below. We will use this environment variable later in the walk through. 
 
 ```
-`export`` STACK``=<``Name`` ``of`` your ``CloudFormation`` stack``>
-#This should match the AWS CloudFormation stack name you specified in the previous step`
+export STACK=<Name of your CloudFormation stack>
+#This should match the AWS CloudFormation stack name you specified in the previous ste
 ```
 
 
 Configure AWS CLI to use the current region as the default
 
 ```
-`export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d\" -f4)`
+export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document
 ```
 
 
 Download and execute startup.sh file by executing the commands below. This startup script will update and install the required python libraries, package the code for your AWS Lambda function, upload it to an Amazon S3 bucket, and copy the output of the AWS CloudFormation stack to the AWS Cloud9 environment. 
 
 ```
-curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/startup.sh -o startup.sh
-`chmod ``700`` startup``.``sh`
-`./``startup``.``sh`
+curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master 
+chmod 700 startup.sh 
+./startup.sh
 ```
 
 
