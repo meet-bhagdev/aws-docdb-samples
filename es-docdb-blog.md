@@ -1,3 +1,4 @@
+
 # Streaming data from Amazon DocumentDB (with MongoDB compatibility) to Amazon Elasticsearch Service using change streams
 
 [Amazon DocumentDB (with MongoDB compatibility)](https://aws.amazon.com/documentdb/) is a fast, scalable, highly available, and fully managed document database service that supports MongoDB workloads. You can use the same MongoDB application code, drivers, and tools to run, manage, and scale workloads on Amazon DocumentDB without worrying about managing the underlying infrastructure. As a document database, Amazon DocumentDB makes it easy to store, query, and index JSON data.
@@ -9,7 +10,7 @@ As use-cases evolve, customers want to be able gain further insights from their 
 In this post we will show you how to integrate Amazon DocumentDB with Amazon Elasticsearch service, to enable you to run full text search queries over your Amazon DocumentDB data. Specifically, we will show you how to use an AWS Lambda function to stream events from your Amazon DocumentDB cluster’s change stream to an Amazon Elasticsearch Service domain, to enable the ability to run full text search queries on the data. To automate the solution, we will use Amazon EventBridge to trigger a message every 120 seconds to Amazon Simple Notification Service (SNS), which will in turn invoke the Lambda function on a schedule. 
 
 The following diagram shows the final architecture of this walkthrough.
-[Image: images/image.png]
+![Alt Text](/images/architecture.png)
 
 ### Walkthrough overview
 
@@ -38,7 +39,7 @@ AWS CloudFormation provides a common language for you to model and provision AWS
 To deploy the template:
 
 1. Go to AWS CloudFormation in AWS console and select **Create stack**. 
-2. Check the **Upload a template file** option, select **Choose file **option and upload the [change stream stack](https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/docdb_change_streams.yml)yaml file, and select **Next.**
+2. Check the **Upload a template file** option, select **Choose file** option and upload the [change stream stack](https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/docdb_change_streams.yml)yaml file, and select **Next.**
 3. Give your stack a name, and input username, password, the identifier for your Amazon DocumentDB cluster, select **Next**. 
 4. AWS Cloud9 uses a Role and an Instance profile. If you have used Cloud9 before, those have been created automatically for you; therefore, select **true** in the options for **ExistingCloud9Role** and **ExistingCloud9InstanceProfile**. Otherwise, leave it as **false**. 
 5. Leave everything as default and select **Next**. Check the box to allow the stack create a role on behalf of you and select **Create stack**. The stack should complete provisioning in a few minutes. 
@@ -52,8 +53,8 @@ To deploy the template:
 AWS Cloud9 is a cloud-based integrated development environment (IDE). From the AWS Management Console, select AWS Cloud9 and launch the environment that was created with the AWS CloudFormation stack. 
 
 * From your AWS Cloud9 environment, launch a new tab to open the Preferences tab
-* Select **AWS SETTINGS **from the left navigation pane
-* Turn off **AWS managed temporary credentials. **This enables us to simplify the developer experience later in the walkthrough
+* Select **AWS SETTINGS** from the left navigation pane
+* Turn off **AWS managed temporary credentials.** This enables us to simplify the developer experience later in the walkthrough
 * Close the Preferences tab 
 
 ![Alt Text](/images/cloud9Credentials.gif)
@@ -61,31 +62,31 @@ AWS Cloud9 is a cloud-based integrated development environment (IDE). From the A
 From the terminal in your Cloud9 environment, remove any existing credentials file:
 
 ```
-`rm -vf ${HOME}/.aws/credentials`
+rm -vf ${HOME}/.aws/credentials
 ```
 
 
 Create an environment variable for the AWS CloudFormation stack name you created using the commands below. We will use this environment variable later in the walk through. 
 
 ```
-`export`` STACK``=<``Name`` ``of`` your ``CloudFormation`` stack``>
-#This should match the AWS CloudFormation stack name you specified in the previous step`
+export STACK=<Name of your CloudFormation stack>
+#This should match the AWS CloudFormation stack name you specified in the previous ste
 ```
 
 
 Configure AWS CLI to use the current region as the default
 
 ```
-`export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d\" -f4)`
+export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document
 ```
 
 
 Download and execute startup.sh file by executing the commands below. This startup script will update and install the required python libraries, package the code for your AWS Lambda function, upload it to an Amazon S3 bucket, and copy the output of the AWS CloudFormation stack to the AWS Cloud9 environment. 
 
 ```
-curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/startup.sh -o startup.sh
-`chmod ``700`` startup``.``sh`
-`./``startup``.``sh`
+curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master 
+chmod 700 startup.sh 
+./startup.sh
 ```
 
 
@@ -96,34 +97,34 @@ curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/
 
 
 ```
-`export`` USERNAME``=<``DocumentDB`` cluster username``>`
-`echo ``"export USERNAME=${USERNAME}"`` ``>>`` ``~/.``bash_profile`
+export USERNAME=<DocumentDB cluster username>
+echo "export USERNAME=${USERNAME}" >> ~/.bash_profile
 
-`export`` PASSWORD``=<``DocumentDB`` cluster password``>`
-`echo ``"export PASSWORD=${PASSWORD}"`` ``>>`` ``~/.``bash_profile`
+export PASSWORD=<DocumentDB cluster password>
+echo "export PASSWORD=${PASSWORD}" >> ~/.bash_profile
 
 export DOCDB_ENDPOINT=$(jq < cfn-output.json -r '.DocumentDBEndpoint')
-`echo ``"export DOCDB_ENDPOINT=${DOCDB_ENDPOINT}"`` ``>>`` ``~/.``bash_profile`
+echo "export DOCDB_ENDPOINT=${DOCDB_ENDPOINT}" >> ~/.bash_profile
 
 #Log in to your Amazon DocumentDB cluster
-`mongo ``--``ssl ``--``host ``$DOCDB_ENDPOINT``:``27017`` ``--``sslCAFile rds``-``combined``-``ca``-``bundle``.``pem ``--``username $USERNAME ``--``password $PASSWORD`
+mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile rds-combined-ca-bundle.pem --username $USERNAME --password $PASSWORD```
 ```
 
 Next, enable the change stream on your cluster using the command below:
 
 ```
-`db.adminCommand({modifyChangeStreams: 1, database: "", collection: "", enable: true});`
+db.adminCommand({modifyChangeStreams: 1, database: "", collection: "", enable: true});
 ```
 
 You should get this response:
 
 ```
-`{ "ok" : 1 }`
+{ "ok" : 1 }
 ```
 
 
 
-### **Step 4. Setup and deploy the AWS Lambda ****function**
+### **Step 4. Setup and deploy the AWS Lambda function**
 
 The AWS Lambda function will retrieve Amazon DocumentDB credentials from AWS Secrets Manager, setup a connection to the Amazon DocumentDB cluster, read the change events from the Amazon DocumentDB change stream and replicate them to an Amazon Elasticsearch service index. The function will also store a change stream resume token in the Amazon DocumentDB cluster so it knows where to resume on its next run. To automate the solution, we will poll for changes every 120 seconds. We will use Amazon EventBridge to trigger a message to Amazon Simple Notification Service (SNS), which will in turn invoke the function.
 
@@ -139,8 +140,8 @@ To deploy the AWS Lambda function, open a new terminal in the AWS Cloud9 environ
 
 ```
 curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/lambda_function_config.sh -o lambda_function_config.sh
-`chmod ``700`` lambda_function_config``.``sh`
-`./``lambda_function_config``.``sh`
+chmod 700 lambda_function_config.sh
+./lambda_function_config.sh
 ```
 
 
@@ -151,15 +152,15 @@ From your AWS Cloud9 terminal, execute the following command to insert sample da
 
 ```
 #Execute Python script to inserext data into your Amazon DocumentDB cluster
-`python es``-``test``.``py`
+python es-test.py
 ```
 
 Validate that documents were inserted by authenticating into your Amazon DocumentDB cluster from the mongo shell and using the following command:
 
 ```
-`mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile rds-combined-ca-bundle.pem --username $USERNAME --password $PASSWORD
-use`` sampledb`
-`db``.``tweets``.``find``()`
+mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile rds-combined-ca-bundle.pem --username $USERNAME --password $PASSWORD
+use sampledb
+db.tweets.find()
 ```
 
 Once the data is inserted into your Amazon DocumentDB cluster, it will autoamatically be replicated to your Amazon Elasticsearch service domain once the AWS Lambda function is executed. The default trigger value will execute your AWS Lambda function every 120 seconds. This is setup using  Amazon Event Bridge and Amazon Simple Notification Service. Alternatively, you can run the AWS Lambda function via the AWS console or the AWS CLI, for ad-hoc testing. Once the AWS Lambda function is triggered, you can then validate the data has been replicated by running the following command against your Amazon Elasticsearch Service domain from the terminal in your Cloud9 environment:
@@ -169,7 +170,8 @@ curl https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/_cat/indi
 ```
 
 You should see that a new index was populated with the data from your Amazon DocumentDB cluster: 
-[Image: image.png]
+![Alt Text](/images/indexresults.png)
+
 Once the data is replicated to your Amazon Elasticsearch Service domain, you can run full text search queries on your JSON data in the Amazon Elasticsearch domain. For example, we can execute a query to find all tweets that have some mention of “gym” in its text: 
 
 ```
@@ -184,7 +186,9 @@ curl -X GET "https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/s
 ```
 
 Expected output:
-[Image: image.png]With Amazon Elasticsearch service, you can also execute fuzzy full text search queries. Fuzzy queries will returns documents that contain terms similar to the search term. For example if the search term is “hello”, documents with data matching “hellp”, “hallo”, “heloo” and more will also be matched. For example, we can execute a query to find all tweets with text that has a fuzzy match for “New”
+![Alt Text](/images/queryresult1.png)
+
+With Amazon Elasticsearch service, you can also execute fuzzy full text search queries. Fuzzy queries will returns documents that contain terms similar to the search term. For example if the search term is “hello”, documents with data matching “hellp”, “hallo”, “heloo” and more will also be matched. For example, we can execute a query to find all tweets with text that has a fuzzy match for “New”
 
 ```
  curl -X GET "https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/media-movie/_search?pretty" -H 'Content-Type: application/json' -d'
@@ -200,7 +204,9 @@ Expected output:
 ```
 
 Expected output:
-[Image: image.png]For more details on types of Amazon Elasticsearch queries, refer to [Searching data in Amazon Elasticsearch service](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-searching.html)
+![Alt Text](/images/queryresult2.png)
+
+For more details on types of Amazon Elasticsearch queries, refer to [Searching data in Amazon Elasticsearch service](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-searching.html)
 
 ### Clean up resources
 
@@ -211,3 +217,4 @@ In order to clean up the resources created in this blog post, navigate to the AW
 This post showed you how to integrate Amazon Elasticsearch service with Amazon DocumentDB to perform full text search queries over JSON data. Specifically we used an AWS Lambda function to replicate change events from an Amazon DocumentDB change stream to an Amazon Elasticsearch service index. Change events can also be used to help integrate Amazon DocumentDB with other AWS services. For example you can replicate change stream events to Amazon Managed Streaming for Apache Kafka (or any other Apache Kafka distro), AWS Kinesis Streams, AWS SQS, and Amazon S3.
 
 If you have any questions or comments about this blog post, please use the comments section on this page. If you are interested in looking at the source code for AWS Lambda function, have a suggestion or would like to file a bug, you can do so on our [Amazon DocumentDB samples Github repository](https://github.com/aws-samples/amazon-documentdb-samples/blob/master/samples/change-streams/app/lambda_function.py). If you have any features requests for Amazon DocumentDB, email us at [documentdb-feature-request@amazon.com](mailto:documentdb-feature-request@amazon.com).
+
