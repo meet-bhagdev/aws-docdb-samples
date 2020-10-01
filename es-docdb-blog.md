@@ -20,7 +20,6 @@ This post includes the following tasks in the walk through:
 2. Setup an AWS Cloud9 environment
 3. Enable change streams on Amazon DocumentDB
 4. Setup and deploy the AWS Lambda streaming function that replicates change events from an Amazon DocumentDB cluster to Amazon Elastic Search Service domain
-    
 5. Execute full text search queries
 
 
@@ -41,7 +40,7 @@ To deploy the template:
 1. Go to AWS CloudFormation in AWS console and select **Create stack**. 
 2. Check the **Upload a template file** option, select **Choose file** option and upload the [change stream stack](https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/docdb_change_streams.yml)yaml file, and select **Next.**
 3. Give your stack a name, and input username, password, the identifier for your Amazon DocumentDB cluster, select **Next**. 
-4. AWS Cloud9 uses a Role and an Instance profile. If you have used Cloud9 before, those have been created automatically for you; therefore, select **true** in the options for **ExistingCloud9Role** and **ExistingCloud9InstanceProfile**. Otherwise, leave it as **false**. 
+4. AWS Cloud9 uses a requires an AWS IAM role. If you have used AWS Cloud9 before, you should already have an existing role. You can verify by going to IAM and searching for the role “AWSCloud9SSMAccessRole (https://console.aws.amazon.com/iam/home?region=us-east-2#/roles/AWSCloud9SSMAccessRole)”. If you already have this role, choose *true*, if not choose *false* and the AWS CloudFormation template will create this role for you.
 5. Leave everything as default and select **Next**. Check the box to allow the stack create a role on behalf of you and select **Create stack**. The stack should complete provisioning in a few minutes. 
 
 
