@@ -9,7 +9,7 @@ As use-cases evolve, customers want to be able gain further insights from their 
 In this post we will show you how to integrate Amazon DocumentDB with Amazon Elasticsearch service, to enable you to run full text search queries over your Amazon DocumentDB data. Specifically, we will show you how to use an AWS Lambda function to stream events from your Amazon DocumentDB cluster’s change stream to an Amazon Elasticsearch Service domain, to enable the ability to run full text search queries on the data. To automate the solution, we will use Amazon EventBridge to trigger a message every 120 seconds to Amazon Simple Notification Service (SNS), which will in turn invoke the Lambda function on a schedule. 
 
 The following diagram shows the final architecture of this walkthrough.
-[Image: image.png]
+[Image: images/image.png]
 
 ### Walkthrough overview
 
@@ -43,7 +43,7 @@ To deploy the template:
 4. AWS Cloud9 uses a Role and an Instance profile. If you have used Cloud9 before, those have been created automatically for you; therefore, select **true** in the options for **ExistingCloud9Role** and **ExistingCloud9InstanceProfile**. Otherwise, leave it as **false**. 
 5. Leave everything as default and select **Next**. Check the box to allow the stack create a role on behalf of you and select **Create stack**. The stack should complete provisioning in a few minutes. 
 
-[Image: cfn.gif]
+[Image: images/cfn.gif]
 ### Step 2. Setup an AWS Cloud9 environment
 
 AWS Cloud9 is a cloud-based integrated development environment (IDE). From the AWS Management Console, select AWS Cloud9 and launch the environment that was created with the AWS CloudFormation stack. 
