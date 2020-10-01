@@ -1,3 +1,4 @@
+
 # Streaming data from Amazon DocumentDB (with MongoDB compatibility) to Amazon Elasticsearch Service using change streams
 
 [Amazon DocumentDB (with MongoDB compatibility)](https://aws.amazon.com/documentdb/) is a fast, scalable, highly available, and fully managed document database service that supports MongoDB workloads. You can use the same MongoDB application code, drivers, and tools to run, manage, and scale workloads on Amazon DocumentDB without worrying about managing the underlying infrastructure. As a document database, Amazon DocumentDB makes it easy to store, query, and index JSON data.
@@ -38,7 +39,7 @@ AWS CloudFormation provides a common language for you to model and provision AWS
 To deploy the template:
 
 1. Go to AWS CloudFormation in AWS console and select **Create stack**. 
-2. Check the **Upload a template file** option, select **Choose file **option and upload the [change stream stack](https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/docdb_change_streams.yml)yaml file, and select **Next.**
+2. Check the **Upload a template file** option, select **Choose file** option and upload the [change stream stack](https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/docdb_change_streams.yml)yaml file, and select **Next.**
 3. Give your stack a name, and input username, password, the identifier for your Amazon DocumentDB cluster, select **Next**. 
 4. AWS Cloud9 uses a Role and an Instance profile. If you have used Cloud9 before, those have been created automatically for you; therefore, select **true** in the options for **ExistingCloud9Role** and **ExistingCloud9InstanceProfile**. Otherwise, leave it as **false**. 
 5. Leave everything as default and select **Next**. Check the box to allow the stack create a role on behalf of you and select **Create stack**. The stack should complete provisioning in a few minutes. 
@@ -52,8 +53,8 @@ To deploy the template:
 AWS Cloud9 is a cloud-based integrated development environment (IDE). From the AWS Management Console, select AWS Cloud9 and launch the environment that was created with the AWS CloudFormation stack. 
 
 * From your AWS Cloud9 environment, launch a new tab to open the Preferences tab
-* Select **AWS SETTINGS **from the left navigation pane
-* Turn off **AWS managed temporary credentials. **This enables us to simplify the developer experience later in the walkthrough
+* Select **AWS SETTINGS** from the left navigation pane
+* Turn off **AWS managed temporary credentials.** This enables us to simplify the developer experience later in the walkthrough
 * Close the Preferences tab 
 
 ![Alt Text](/images/cloud9Credentials.gif)
@@ -123,7 +124,7 @@ You should get this response:
 
 
 
-### **Step 4. Setup and deploy the AWS Lambda ****function**
+### **Step 4. Setup and deploy the AWS Lambda function**
 
 The AWS Lambda function will retrieve Amazon DocumentDB credentials from AWS Secrets Manager, setup a connection to the Amazon DocumentDB cluster, read the change events from the Amazon DocumentDB change stream and replicate them to an Amazon Elasticsearch service index. The function will also store a change stream resume token in the Amazon DocumentDB cluster so it knows where to resume on its next run. To automate the solution, we will poll for changes every 120 seconds. We will use Amazon EventBridge to trigger a message to Amazon Simple Notification Service (SNS), which will in turn invoke the function.
 
