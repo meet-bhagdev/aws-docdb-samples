@@ -43,7 +43,10 @@ To deploy the template:
 4. AWS Cloud9 uses a Role and an Instance profile. If you have used Cloud9 before, those have been created automatically for you; therefore, select **true** in the options for **ExistingCloud9Role** and **ExistingCloud9InstanceProfile**. Otherwise, leave it as **false**. 
 5. Leave everything as default and select **Next**. Check the box to allow the stack create a role on behalf of you and select **Create stack**. The stack should complete provisioning in a few minutes. 
 
-[Image: images/cfn.gif]
+
+![Alt Text](/images/cfn.gif)
+
+
 ### Step 2. Setup an AWS Cloud9 environment
 
 AWS Cloud9 is a cloud-based integrated development environment (IDE). From the AWS Management Console, select AWS Cloud9 and launch the environment that was created with the AWS CloudFormation stack. 
@@ -53,7 +56,8 @@ AWS Cloud9 is a cloud-based integrated development environment (IDE). From the A
 * Turn off **AWS managed temporary credentials. **This enables us to simplify the developer experience later in the walkthrough
 * Close the Preferences tab 
 
-[Image: cloud9Credentials.gif]
+![Alt Text](/images/cloud9Credentials.gif)
+
 From the terminal in your Cloud9 environment, remove any existing credentials file:
 
 ```
