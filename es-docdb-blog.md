@@ -185,7 +185,7 @@ curl -X GET "https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/s
 ```
 
 Expected output:
-![Alt Text](/images/queryresults1.png)
+![Alt Text](/images/queryresult1.png)
 
 With Amazon Elasticsearch service, you can also execute fuzzy full text search queries. Fuzzy queries will returns documents that contain terms similar to the search term. For example if the search term is “hello”, documents with data matching “hellp”, “hallo”, “heloo” and more will also be matched. For example, we can execute a query to find all tweets with text that has a fuzzy match for “New”
 
@@ -203,7 +203,7 @@ With Amazon Elasticsearch service, you can also execute fuzzy full text search q
 ```
 
 Expected output:
-![Alt Text](/images/queryresults2.png)
+![Alt Text](/images/queryresult2.png)
 
 For more details on types of Amazon Elasticsearch queries, refer to [Searching data in Amazon Elasticsearch service](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-searching.html)
 
