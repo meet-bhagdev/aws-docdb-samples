@@ -70,7 +70,7 @@ Create an environment variable for the AWS CloudFormation stack name you created
 
 ```
 export STACK=<Name of your CloudFormation stack>
-#This should match the AWS CloudFormation stack name you specified in the previous ste
+#This should match the AWS CloudFormation stack name you specified in the previous step
 ```
 
 
