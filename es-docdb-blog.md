@@ -140,8 +140,8 @@ To deploy the AWS Lambda function, open a new terminal in the AWS Cloud9 environ
 
 ```
 curl -s https://raw.githubusercontent.com/aws-samples/amazon-documentdb-samples/master/samples/change-streams/setup/lambda_function_config.sh -o lambda_function_config.sh
-`chmod ``700`` lambda_function_config``.``sh`
-`./``lambda_function_config``.``sh`
+chmod 700 lambda_function_config.sh
+./lambda_function_config.sh
 ```
 
 
@@ -152,15 +152,15 @@ From your AWS Cloud9 terminal, execute the following command to insert sample da
 
 ```
 #Execute Python script to inserext data into your Amazon DocumentDB cluster
-`python es``-``test``.``py`
+python es-test.py
 ```
 
 Validate that documents were inserted by authenticating into your Amazon DocumentDB cluster from the mongo shell and using the following command:
 
 ```
-`mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile rds-combined-ca-bundle.pem --username $USERNAME --password $PASSWORD
-use`` sampledb`
-`db``.``tweets``.``find``()`
+mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile rds-combined-ca-bundle.pem --username $USERNAME --password $PASSWORD
+use sampledb
+db.tweets.find()
 ```
 
 Once the data is inserted into your Amazon DocumentDB cluster, it will autoamatically be replicated to your Amazon Elasticsearch service domain once the AWS Lambda function is executed. The default trigger value will execute your AWS Lambda function every 120 seconds. This is setup using  Amazon Event Bridge and Amazon Simple Notification Service. Alternatively, you can run the AWS Lambda function via the AWS console or the AWS CLI, for ad-hoc testing. Once the AWS Lambda function is triggered, you can then validate the data has been replicated by running the following command against your Amazon Elasticsearch Service domain from the terminal in your Cloud9 environment:
