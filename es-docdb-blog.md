@@ -97,29 +97,29 @@ chmod 700 startup.sh
 
 
 ```
-`export`` USERNAME``=<``DocumentDB`` cluster username``>`
-`echo ``"export USERNAME=${USERNAME}"`` ``>>`` ``~/.``bash_profile`
+export USERNAME=<DocumentDB cluster username>
+echo "export USERNAME=${USERNAME}" >> ~/.bash_profile
 
-`export`` PASSWORD``=<``DocumentDB`` cluster password``>`
-`echo ``"export PASSWORD=${PASSWORD}"`` ``>>`` ``~/.``bash_profile`
+export PASSWORD=<DocumentDB cluster password>
+echo "export PASSWORD=${PASSWORD}" >> ~/.bash_profile
 
 export DOCDB_ENDPOINT=$(jq < cfn-output.json -r '.DocumentDBEndpoint')
-`echo ``"export DOCDB_ENDPOINT=${DOCDB_ENDPOINT}"`` ``>>`` ``~/.``bash_profile`
+echo "export DOCDB_ENDPOINT=${DOCDB_ENDPOINT}" >> ~/.bash_profile
 
 #Log in to your Amazon DocumentDB cluster
-`mongo ``--``ssl ``--``host ``$DOCDB_ENDPOINT``:``27017`` ``--``sslCAFile rds``-``combined``-``ca``-``bundle``.``pem ``--``username $USERNAME ``--``password $PASSWORD`
+mongo --ssl --host $DOCDB_ENDPOINT:27017 --sslCAFile rds-combined-ca-bundle.pem --username $USERNAME --password $PASSWORD```
 ```
 
 Next, enable the change stream on your cluster using the command below:
 
 ```
-`db.adminCommand({modifyChangeStreams: 1, database: "", collection: "", enable: true});`
+db.adminCommand({modifyChangeStreams: 1, database: "", collection: "", enable: true});
 ```
 
 You should get this response:
 
 ```
-`{ "ok" : 1 }`
+{ "ok" : 1 }
 ```
 
 
@@ -217,3 +217,4 @@ In order to clean up the resources created in this blog post, navigate to the AW
 This post showed you how to integrate Amazon Elasticsearch service with Amazon DocumentDB to perform full text search queries over JSON data. Specifically we used an AWS Lambda function to replicate change events from an Amazon DocumentDB change stream to an Amazon Elasticsearch service index. Change events can also be used to help integrate Amazon DocumentDB with other AWS services. For example you can replicate change stream events to Amazon Managed Streaming for Apache Kafka (or any other Apache Kafka distro), AWS Kinesis Streams, AWS SQS, and Amazon S3.
 
 If you have any questions or comments about this blog post, please use the comments section on this page. If you are interested in looking at the source code for AWS Lambda function, have a suggestion or would like to file a bug, you can do so on our [Amazon DocumentDB samples Github repository](https://github.com/aws-samples/amazon-documentdb-samples/blob/master/samples/change-streams/app/lambda_function.py). If you have any features requests for Amazon DocumentDB, email us at [documentdb-feature-request@amazon.com](mailto:documentdb-feature-request@amazon.com).
+
