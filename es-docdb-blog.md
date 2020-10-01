@@ -9,7 +9,7 @@ As use-cases evolve, customers want to be able gain further insights from their 
 In this post we will show you how to integrate Amazon DocumentDB with Amazon Elasticsearch service, to enable you to run full text search queries over your Amazon DocumentDB data. Specifically, we will show you how to use an AWS Lambda function to stream events from your Amazon DocumentDB cluster’s change stream to an Amazon Elasticsearch Service domain, to enable the ability to run full text search queries on the data. To automate the solution, we will use Amazon EventBridge to trigger a message every 120 seconds to Amazon Simple Notification Service (SNS), which will in turn invoke the Lambda function on a schedule. 
 
 The following diagram shows the final architecture of this walkthrough.
-[Image: images/image.png]
+![Alt Text](/images/architecture.png)
 
 ### Walkthrough overview
 
@@ -169,7 +169,8 @@ curl https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/_cat/indi
 ```
 
 You should see that a new index was populated with the data from your Amazon DocumentDB cluster: 
-[Image: image.png]
+![Alt Text](/images/indexresults.png)
+
 Once the data is replicated to your Amazon Elasticsearch Service domain, you can run full text search queries on your JSON data in the Amazon Elasticsearch domain. For example, we can execute a query to find all tweets that have some mention of “gym” in its text: 
 
 ```
@@ -184,7 +185,9 @@ curl -X GET "https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/s
 ```
 
 Expected output:
-[Image: image.png]With Amazon Elasticsearch service, you can also execute fuzzy full text search queries. Fuzzy queries will returns documents that contain terms similar to the search term. For example if the search term is “hello”, documents with data matching “hellp”, “hallo”, “heloo” and more will also be matched. For example, we can execute a query to find all tweets with text that has a fuzzy match for “New”
+![Alt Text](/images/queryresults1.png)
+
+With Amazon Elasticsearch service, you can also execute fuzzy full text search queries. Fuzzy queries will returns documents that contain terms similar to the search term. For example if the search term is “hello”, documents with data matching “hellp”, “hallo”, “heloo” and more will also be matched. For example, we can execute a query to find all tweets with text that has a fuzzy match for “New”
 
 ```
  curl -X GET "https://$(jq < cfn-output.json -r '.ElasticsearchDomainEndpoint')/media-movie/_search?pretty" -H 'Content-Type: application/json' -d'
@@ -200,7 +203,9 @@ Expected output:
 ```
 
 Expected output:
-[Image: image.png]For more details on types of Amazon Elasticsearch queries, refer to [Searching data in Amazon Elasticsearch service](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-searching.html)
+![Alt Text](/images/queryresults2.png)
+
+For more details on types of Amazon Elasticsearch queries, refer to [Searching data in Amazon Elasticsearch service](https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-searching.html)
 
 ### Clean up resources
 
